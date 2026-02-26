@@ -1,83 +1,92 @@
 import { create } from 'zustand';
-import type { AuthState, Session } from '@/types';
-import {
-  initializeStorage,
-  findUserByCredentials,
-  saveSession,
-  clearSession,
-  getSession,
-  isAdmin,
-} from '@/utils/storage';
+import { persist } from 'zustand/middleware';
+import type { User } from '@/types';
 
-// Initialize storage on load
-initializeStorage();
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  allowedModules: string[];
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  login: (username: string, password: string) => Promise<boolean>;
+  logout: () => void;
+  checkAuth: () => void;
+}
 
-export const useAuthStore = create<AuthState>((set) => ({
-  session: null,
-  isAuthenticated: false,
-  isAdmin: false,
-
-  login: (username: string, password: string) => {
-    const user = findUserByCredentials(username, password);
-
-    if (!user) {
-      // Check if user exists but is inactive
-      const users = JSON.parse(localStorage.getItem('erp_users') || '[]');
-      const inactiveUser = users.find(
-        (u: { username: string; password: string; active: boolean }) =>
-          u.username === username && u.password === password && !u.active
-      );
-
-      if (inactiveUser) {
-        return {
-          success: false,
-          message: 'Hesabınız pasif durumda. Lütfen yöneticinizle iletişime geçin.',
-        };
-      }
-
-      return {
-        success: false,
-        message: 'Kullanıcı adı veya şifre hatalı.',
-      };
-    }
-
-    const session: Session = {
-      userId: user.id,
-      username: user.username,
-      name: user.name,
-      allowedModules: user.allowedModules,
-    };
-
-    saveSession(session);
-
-    set({
-      session,
-      isAuthenticated: true,
-      isAdmin: isAdmin(user.allowedModules),
-    });
-
-    return { success: true, message: 'Giriş başarılı.' };
+// Demo kullanıcılar
+const DEMO_USERS: Record<string, { user: User; password: string }> = {
+  admin: {
+    user: {
+      id: '1',
+      username: 'admin',
+      email: 'admin@oys.com',
+      fullName: 'Admin User',
+      isAdmin: true,
+      modules: ['all'],
+    },
+    password: 'admin123',
   },
+  user: {
+    user: {
+      id: '2',
+      username: 'user',
+      email: 'user@oys.com',
+      fullName: 'Normal User',
+      isAdmin: false,
+      modules: ['1', '2', '3', '3a', '4'],
+    },
+    password: 'user123',
+  },
+};
 
-  logout: () => {
-    clearSession();
-    set({
-      session: null,
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
+      user: null,
+      token: null,
+      allowedModules: [],
       isAuthenticated: false,
       isAdmin: false,
-    });
-  },
 
-  checkAuth: () => {
-    const session = getSession();
-    if (session) {
-      set({
-        session,
-        isAuthenticated: true,
-        isAdmin: isAdmin(session.allowedModules),
-      });
-      return true;
+      login: async (username: string, password: string) => {
+        const demoUser = DEMO_USERS[username];
+        if (demoUser && demoUser.password === password) {
+          set({
+            user: demoUser.user,
+            token: 'demo-token-' + Date.now(),
+            allowedModules: demoUser.user.modules,
+            isAuthenticated: true,
+            isAdmin: demoUser.user.isAdmin,
+          });
+          return true;
+        }
+        return false;
+      },
+
+      logout: () => {
+        set({
+          user: null,
+          token: null,
+          allowedModules: [],
+          isAuthenticated: false,
+          isAdmin: false,
+        });
+      },
+
+      checkAuth: () => {
+        const { token } = get();
+        if (!token) {
+          set({
+            user: null,
+            isAuthenticated: false,
+            isAdmin: false,
+            allowedModules: [],
+          });
+        }
+      },
+    }),
+    {
+      name: 'auth-storage',
     }
-    return false;
-  },
-}));
+  )
+);

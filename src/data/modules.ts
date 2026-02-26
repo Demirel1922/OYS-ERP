@@ -66,8 +66,8 @@ export const MODULES: Module[] = [
   },
   {
     id: '6',
-    title: 'Planlama',
-    description: 'Üretim planlama yönetimi',
+    title: 'Üretim',
+    description: 'Üretim süreçleri yönetimi',
     route: '/module/6',
     parent: null,
     hasChildren: false,
@@ -75,8 +75,8 @@ export const MODULES: Module[] = [
   },
   {
     id: '7',
-    title: 'Üretim',
-    description: 'Üretim süreçleri yönetimi',
+    title: 'Kalite',
+    description: 'Kalite kontrol ve yönetimi',
     route: '/module/7',
     parent: null,
     hasChildren: false,
@@ -84,8 +84,8 @@ export const MODULES: Module[] = [
   },
   {
     id: '8',
-    title: 'Ara/Bekleme Deposu',
-    description: 'Ara bekleme depo yönetimi',
+    title: 'Sevkiyat',
+    description: 'Sevkiyat ve lojistik yönetimi',
     route: '/module/8',
     parent: null,
     hasChildren: false,
@@ -93,8 +93,8 @@ export const MODULES: Module[] = [
   },
   {
     id: '9',
-    title: 'Yarı Mamul Depo',
-    description: 'Yarı mamul depo yönetimi',
+    title: 'Raporlar',
+    description: 'Raporlama ve analiz',
     route: '/module/9',
     parent: null,
     hasChildren: false,
@@ -102,97 +102,27 @@ export const MODULES: Module[] = [
   },
   {
     id: '10',
-    title: 'Ütü & Paket',
-    description: 'Ütü ve paketleme yönetimi',
+    title: 'Yönetim',
+    description: 'Yönetim ve ayarlar',
     route: '/module/10',
-    parent: null,
-    hasChildren: false,
-    adminOnly: false,
-  },
-  {
-    id: '11',
-    title: 'Kalite Kontrol',
-    description: 'Kalite kontrol süreçleri',
-    route: '/module/11',
-    parent: null,
-    hasChildren: false,
-    adminOnly: false,
-  },
-  {
-    id: '12',
-    title: 'Mamul Depo',
-    description: 'Mamul depo yönetimi',
-    route: '/module/12',
-    parent: null,
-    hasChildren: false,
-    adminOnly: false,
-  },
-  {
-    id: '13',
-    title: 'Sertifikalar',
-    description: 'Sertifika yönetimi',
-    route: '/module/13',
-    parent: null,
-    hasChildren: false,
-    adminOnly: false,
-  },
-  {
-    id: '14',
-    title: 'Bakım Onarım',
-    description: 'Bakım ve onarım yönetimi',
-    route: '/module/14',
-    parent: null,
-    hasChildren: false,
-    adminOnly: false,
-  },
-  {
-    id: '15',
-    title: 'Raporlar',
-    description: 'Raporlama ve analiz',
-    route: '/module/15',
-    parent: null,
-    hasChildren: false,
-    adminOnly: false,
-  },
-  {
-    id: '16',
-    title: 'Yönetim Paneli',
-    description: 'Sistem yönetimi ve kullanıcı yönetimi',
-    route: '/admin',
     parent: null,
     hasChildren: false,
     adminOnly: true,
   },
 ];
 
-// Get all parent modules (excluding children like 3a, 3b)
-export function getParentModules(): Module[] {
-  return MODULES.filter((m) => m.parent === null);
-}
-
-// Get child modules of a parent
-export function getChildModules(parentId: string): Module[] {
-  return MODULES.filter((m) => m.parent === parentId);
-}
-
-// Get module by id
 export function getModuleById(id: string): Module | undefined {
   return MODULES.find((m) => m.id === id);
 }
 
-// Get all module IDs for permission selector
-export function getAllModuleIds(): string[] {
-  return MODULES.map((m) => m.id);
+export function getChildModules(parentId: string): Module[] {
+  return MODULES.filter((m) => m.parent === parentId);
 }
 
-// Check if module is a child module
-export function isChildModule(id: string): boolean {
-  const module = getModuleById(id);
-  return module ? module.parent !== null : false;
-}
-
-// Get module title by id
-export function getModuleTitle(id: string): string {
-  const module = getModuleById(id);
-  return module ? module.title : id;
+export function getParentModule(childId: string): Module | undefined {
+  const child = MODULES.find((m) => m.id === childId);
+  if (child?.parent) {
+    return MODULES.find((m) => m.id === child.parent);
+  }
+  return undefined;
 }

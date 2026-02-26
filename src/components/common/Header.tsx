@@ -1,46 +1,54 @@
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/button';
 import { LogOut, User } from 'lucide-react';
 
 export function Header() {
-  const { session, logout } = useAuthStore();
+  const navigate = useNavigate();
+  const { user, logout, isAdmin } = useAuthStore();
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/login';
+    navigate('/login');
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm">
+    <header className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-gray-900">
-              ÇORAP ERP
+            <h1 
+              className="text-xl font-bold text-gray-900 cursor-pointer"
+              onClick={() => navigate('/dashboard')}
+            >
+              OYS-ERP
             </h1>
-            <span className="ml-2 text-sm text-gray-500">
-              MVP 0
+            <span className="mx-2 text-gray-400">|</span>
+            <span className="text-sm text-gray-600">
+              Örmeci Yönetim Sistemi
             </span>
           </div>
 
-          {session && (
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center text-sm text-gray-700">
-                <User className="w-4 h-4 mr-2" />
-                <span className="font-medium">{session.name}</span>
-                <span className="ml-2 text-gray-400">({session.username})</span>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-                className="flex items-center"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Çıkış
-              </Button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <User className="w-4 h-4" />
+              <span>{user?.fullName}</span>
+              {isAdmin && (
+                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded">
+                  Admin
+                </span>
+              )}
             </div>
-          )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Çıkış
+            </Button>
+          </div>
         </div>
       </div>
     </header>

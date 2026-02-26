@@ -6,6 +6,7 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { useAuthStore } from '@/store/authStore';
 import { Login } from '@/pages/Login';
 import { Dashboard } from '@/pages/Dashboard';
@@ -14,6 +15,9 @@ import { ModulePlaceholder } from '@/pages/ModulePlaceholder';
 import { NotAuthorized403 } from '@/pages/NotAuthorized403';
 import { NotFound404 } from '@/pages/NotFound404';
 import { ProtectedRoute, ModuleProtectedRoute } from '@/components/common/ProtectedRoute';
+
+// YENİ: İplik Depo Modülü Import
+import IplikDepo from '@/pages/IplikDepo';
 
 // Auth check wrapper
 function AuthWrapper({ children }: { children: React.ReactNode }) {
@@ -72,6 +76,17 @@ function AppRoutes() {
       />
 
       {/* Module Routes */}
+      {/* YENİ: İplik Depo Modülü (3a) - Gerçek implementasyon */}
+      <Route
+        path="/module/3a"
+        element={
+          <ModuleProtectedRoute>
+            <IplikDepo />
+          </ModuleProtectedRoute>
+        }
+      />
+
+      {/* Diğer modüller için placeholder */}
       <Route
         path="/module/:id"
         element={
@@ -111,6 +126,7 @@ function App() {
       <AuthWrapper>
         <AppRoutes />
       </AuthWrapper>
+      <Toaster position="top-right" richColors />
     </BrowserRouter>
   );
 }

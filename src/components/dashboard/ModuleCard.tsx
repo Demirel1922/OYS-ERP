@@ -1,56 +1,77 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Module } from '@/types';
+import { 
+  Package, 
+  ClipboardList, 
+  Warehouse, 
+  ShoppingCart, 
+  Truck, 
+  Factory,
+  CheckCircle,
+  BarChart3,
+  Settings,
+  FileText
+} from 'lucide-react';
+
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  '1': FileText,
+  '2': ClipboardList,
+  '3': Warehouse,
+  '3a': Package,
+  '3b': Package,
+  '4': ShoppingCart,
+  '5': Truck,
+  '6': Factory,
+  '7': CheckCircle,
+  '8': Truck,
+  '9': BarChart3,
+  '10': Settings,
+};
 
 interface ModuleCardProps {
   module: Module;
-  onClick: () => void;
-  isExpanded?: boolean;
-  showExpandIcon?: boolean;
   isChild?: boolean;
 }
 
-export function ModuleCard({
-  module,
-  onClick,
-  isExpanded = false,
-  showExpandIcon = false,
-  isChild = false,
-}: ModuleCardProps) {
+export function ModuleCard({ module, isChild = false }: ModuleCardProps) {
+  const navigate = useNavigate();
+  const Icon = iconMap[module.id] || Package;
+
+  const handleClick = () => {
+    if (!module.hasChildren) {
+      navigate(module.route);
+    }
+  };
+
   return (
     <Card
-      onClick={onClick}
       className={`
-        cursor-pointer transition-all duration-200 hover:shadow-md
+        cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02]
         ${isChild ? 'border-l-4 border-l-blue-500' : ''}
-        hover:border-blue-400
       `}
+      onClick={handleClick}
     >
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <CardTitle className={`${isChild ? 'text-base' : 'text-lg'} font-semibold`}>
-            {module.title}
-          </CardTitle>
-          {showExpandIcon && (
-            <div className="text-gray-400">
-              {isExpanded ? (
-                <ChevronUp className="w-5 h-5" />
-              ) : (
-                <ChevronDown className="w-5 h-5" />
-              )}
-            </div>
+          <div className={`p-3 rounded-lg bg-blue-50 ${isChild ? 'bg-blue-100' : ''}`}>
+            <Icon className="w-6 h-6 text-blue-600" />
+          </div>
+          {module.adminOnly && (
+            <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
+              Admin
+            </span>
           )}
         </div>
+        <CardTitle className={`mt-3 ${isChild ? 'text-base' : 'text-lg'}`}>
+          {module.title}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <CardDescription className="text-sm text-gray-600">
-          {module.description}
-        </CardDescription>
-        {isChild && (
-          <div className="mt-2 text-xs text-blue-600 font-medium">
-            Alt Modül
-          </div>
-        )}
+        <p className="text-sm text-gray-600">{module.description}</p>
+        <div className="mt-3 text-xs text-gray-400">
+          Modül ID: {module.id}
+        </div>
       </CardContent>
     </Card>
   );
