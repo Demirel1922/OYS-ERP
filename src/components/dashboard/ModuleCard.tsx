@@ -11,7 +11,10 @@ import {
   CheckCircle,
   BarChart3,
   Settings,
-  FileText
+  FileText,
+  ChevronRight,
+  FileBadge,
+  BookOpen
 } from 'lucide-react';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -21,12 +24,20 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   '3a': Package,
   '3b': Package,
   '4': ShoppingCart,
+  '4a': FileText,
+  '4b': BarChart3,
+  '4c': Truck,
   '5': Truck,
   '6': Factory,
   '7': CheckCircle,
-  '8': Truck,
   '9': BarChart3,
   '10': Settings,
+  '11': FileBadge,
+  '11a': BookOpen,
+  '11a1': FileText,
+  '11a2': FileBadge,
+  '11a3': Settings,
+  '11a4': BarChart3,
 };
 
 interface ModuleCardProps {
@@ -39,9 +50,7 @@ export function ModuleCard({ module, isChild = false }: ModuleCardProps) {
   const Icon = iconMap[module.id] || Package;
 
   const handleClick = () => {
-    if (!module.hasChildren) {
-      navigate(module.route);
-    }
+    navigate(module.route);
   };
 
   return (
@@ -57,11 +66,16 @@ export function ModuleCard({ module, isChild = false }: ModuleCardProps) {
           <div className={`p-3 rounded-lg bg-blue-50 ${isChild ? 'bg-blue-100' : ''}`}>
             <Icon className="w-6 h-6 text-blue-600" />
           </div>
-          {module.adminOnly && (
-            <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
-              Admin
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {module.hasChildren && (
+              <ChevronRight className="w-5 h-5 text-gray-400" />
+            )}
+            {module.adminOnly && (
+              <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
+                Admin
+              </span>
+            )}
+          </div>
         </div>
         <CardTitle className={`mt-3 ${isChild ? 'text-base' : 'text-lg'}`}>
           {module.title}

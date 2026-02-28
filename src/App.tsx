@@ -12,12 +12,17 @@ import { Login } from '@/pages/Login';
 import { Dashboard } from '@/pages/Dashboard';
 import { Admin } from '@/pages/Admin';
 import { ModulePlaceholder } from '@/pages/ModulePlaceholder';
+import { SubModulePlaceholder } from '@/pages/SubModulePlaceholder';
 import { NotAuthorized403 } from '@/pages/NotAuthorized403';
 import { NotFound404 } from '@/pages/NotFound404';
 import { ProtectedRoute, ModuleProtectedRoute } from '@/components/common/ProtectedRoute';
 
-// YENİ: İplik Depo Modülü Import
+// Modül sayfaları
 import IplikDepo from '@/pages/IplikDepo';
+import HammaddeDepo from '@/pages/HammaddeDepo';
+import SiparisSatisSevkiyat from '@/pages/SiparisSatisSevkiyat';
+import Sertifikalar from '@/pages/Sertifikalar';
+import DIRPage from '@/pages/Sertifikalar/DIR';
 
 // Auth check wrapper
 function AuthWrapper({ children }: { children: React.ReactNode }) {
@@ -76,13 +81,133 @@ function AppRoutes() {
       />
 
       {/* Module Routes */}
-      {/* YENİ: İplik Depo Modülü (3a) - Gerçek implementasyon */}
+      {/* Hammadde / Malzeme Depo Ana Modülü */}
+      <Route
+        path="/module/3"
+        element={
+          <ModuleProtectedRoute>
+            <HammaddeDepo />
+          </ModuleProtectedRoute>
+        }
+      />
+
+      {/* İplik Depo Modülü (3a) - Gerçek implementasyon */}
       <Route
         path="/module/3a"
         element={
           <ModuleProtectedRoute>
             <IplikDepo />
           </ModuleProtectedRoute>
+        }
+      />
+
+      {/* Aksesuar Depo Modülü (3b) */}
+      <Route
+        path="/module/3b"
+        element={
+          <ModuleProtectedRoute>
+            <SubModulePlaceholder />
+          </ModuleProtectedRoute>
+        }
+      />
+
+      {/* Sipariş-Satış-Sevkiyat Ana Modülü */}
+      <Route
+        path="/module/4"
+        element={
+          <ModuleProtectedRoute>
+            <SiparisSatisSevkiyat />
+          </ModuleProtectedRoute>
+        }
+      />
+
+      {/* Sipariş-Satış-Sevkiyat Alt Modülleri */}
+      <Route
+        path="/module/4/siparis"
+        element={
+          <ModuleProtectedRoute>
+            <SubModulePlaceholder />
+          </ModuleProtectedRoute>
+        }
+      />
+      <Route
+        path="/module/4/satis"
+        element={
+          <ModuleProtectedRoute>
+            <SubModulePlaceholder />
+          </ModuleProtectedRoute>
+        }
+      />
+      <Route
+        path="/module/4/sevkiyat"
+        element={
+          <ModuleProtectedRoute>
+            <SubModulePlaceholder />
+          </ModuleProtectedRoute>
+        }
+      />
+
+      {/* Sertifikalar Ana Modülü */}
+      <Route
+        path="/module/11"
+        element={
+          <ModuleProtectedRoute>
+            <Sertifikalar />
+          </ModuleProtectedRoute>
+        }
+      />
+
+      {/* DİR Ana Modülü */}
+      <Route
+        path="/module/11/dir"
+        element={
+          <ModuleProtectedRoute>
+            <DIRPage />
+          </ModuleProtectedRoute>
+        }
+      />
+
+      {/* DİR Alt Modülleri */}
+      <Route
+        path="/module/11/dir/tanimlar"
+        element={
+          <ModuleProtectedRoute>
+            <SubModulePlaceholder />
+          </ModuleProtectedRoute>
+        }
+      />
+      <Route
+        path="/module/11/dir/belgeler"
+        element={
+          <ModuleProtectedRoute>
+            <SubModulePlaceholder />
+          </ModuleProtectedRoute>
+        }
+      />
+      <Route
+        path="/module/11/dir/yonetim"
+        element={
+          <ModuleProtectedRoute>
+            <SubModulePlaceholder />
+          </ModuleProtectedRoute>
+        }
+      />
+      <Route
+        path="/module/11/dir/raporlar"
+        element={
+          <ModuleProtectedRoute>
+            <SubModulePlaceholder />
+          </ModuleProtectedRoute>
+        }
+      />
+
+      {/* Yönetim Modülü (10) - Kullanıcı Yetkilendirme */}
+      <Route
+        path="/module/10"
+        element={
+          <ProtectedRoute requireAdmin={true}>
+            <Admin />
+          </ProtectedRoute>
         }
       />
 

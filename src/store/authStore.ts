@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { User } from '@/types';
+import { useUsersStore } from './usersStore';
 
 interface AuthState {
   user: User | null;
@@ -13,32 +14,6 @@ interface AuthState {
   checkAuth: () => void;
 }
 
-// Demo kullanıcılar
-const DEMO_USERS: Record<string, { user: User; password: string }> = {
-  admin: {
-    user: {
-      id: '1',
-      username: 'admin',
-      email: 'admin@oys.com',
-      fullName: 'Admin User',
-      isAdmin: true,
-      modules: ['all'],
-    },
-    password: 'admin123',
-  },
-  user: {
-    user: {
-      id: '2',
-      username: 'user',
-      email: 'user@oys.com',
-      fullName: 'Normal User',
-      isAdmin: false,
-      modules: ['1', '2', '3', '3a', '4'],
-    },
-    password: 'user123',
-  },
-};
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -49,14 +24,24 @@ export const useAuthStore = create<AuthState>()(
       isAdmin: false,
 
       login: async (username: string, password: string) => {
-        const demoUser = DEMO_USERS[username];
-        if (demoUser && demoUser.password === password) {
+        // usersStore'dan kullanıcıları al
+        const users = useUsersStore.getState().users;
+        const user = users.find(u => u.username === username && u.password === password);
+        
+        if (user) {
           set({
-            user: demoUser.user,
-            token: 'demo-token-' + Date.now(),
-            allowedModules: demoUser.user.modules,
+            user: {
+              id: user.id,
+              username: user.username,
+              email: user.email,
+              fullName: user.fullName,
+              isAdmin: user.isAdmin,
+              modules: user.modules,
+            },
+            token: 'token-' + Date.now(),
+            allowedModules: user.modules,
             isAuthenticated: true,
-            isAdmin: demoUser.user.isAdmin,
+            isAdmin: user.isAdmin,
           });
           return true;
         }

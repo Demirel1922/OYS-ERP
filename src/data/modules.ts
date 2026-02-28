@@ -52,6 +52,34 @@ export const MODULES: Module[] = [
     description: 'Sipariş, satış ve sevkiyat yönetimi',
     route: '/module/4',
     parent: null,
+    hasChildren: true,
+    adminOnly: false,
+  },
+  // Sipariş-Satış-Sevkiyat alt modülleri
+  {
+    id: '4a',
+    title: 'Sipariş',
+    description: 'Sipariş yönetimi ve takibi',
+    route: '/module/4/siparis',
+    parent: '4',
+    hasChildren: false,
+    adminOnly: false,
+  },
+  {
+    id: '4b',
+    title: 'Satış',
+    description: 'Satış işlemleri yönetimi',
+    route: '/module/4/satis',
+    parent: '4',
+    hasChildren: false,
+    adminOnly: false,
+  },
+  {
+    id: '4c',
+    title: 'Sevkiyat',
+    description: 'Sevkiyat ve lojistik yönetimi',
+    route: '/module/4/sevkiyat',
+    parent: '4',
     hasChildren: false,
     adminOnly: false,
   },
@@ -82,15 +110,7 @@ export const MODULES: Module[] = [
     hasChildren: false,
     adminOnly: false,
   },
-  {
-    id: '8',
-    title: 'Sevkiyat',
-    description: 'Sevkiyat ve lojistik yönetimi',
-    route: '/module/8',
-    parent: null,
-    hasChildren: false,
-    adminOnly: false,
-  },
+  // Sevkiyat (id: '8') KALDIRILDI - artık 4c altında
   {
     id: '9',
     title: 'Raporlar',
@@ -109,6 +129,63 @@ export const MODULES: Module[] = [
     hasChildren: false,
     adminOnly: true,
   },
+  // YENİ: Sertifikalar modülü
+  {
+    id: '11',
+    title: 'Sertifikalar',
+    description: 'Sertifika ve belge yönetimi',
+    route: '/module/11',
+    parent: null,
+    hasChildren: true,
+    adminOnly: false,
+  },
+  // Sertifikalar alt modülleri
+  {
+    id: '11a',
+    title: 'DİR (Dahilde İşleme Rejimi)',
+    description: 'Dahilde İşleme Rejimi belge takibi',
+    route: '/module/11/dir',
+    parent: '11',
+    hasChildren: true,
+    adminOnly: false,
+  },
+  // DİR alt modülleri
+  {
+    id: '11a1',
+    title: 'Tanımlar',
+    description: 'GTİP/kompozisyon tanımları',
+    route: '/module/11/dir/tanimlar',
+    parent: '11a',
+    hasChildren: false,
+    adminOnly: false,
+  },
+  {
+    id: '11a2',
+    title: 'DİR Belgeleri',
+    description: 'Belge bazlı takip',
+    route: '/module/11/dir/belgeler',
+    parent: '11a',
+    hasChildren: false,
+    adminOnly: false,
+  },
+  {
+    id: '11a3',
+    title: 'Yönetim',
+    description: 'Yetki ve parametreler',
+    route: '/module/11/dir/yonetim',
+    parent: '11a',
+    hasChildren: false,
+    adminOnly: false,
+  },
+  {
+    id: '11a4',
+    title: 'Raporlar',
+    description: 'Özet raporlar',
+    route: '/module/11/dir/raporlar',
+    parent: '11a',
+    hasChildren: false,
+    adminOnly: false,
+  },
 ];
 
 export function getModuleById(id: string): Module | undefined {
@@ -125,4 +202,9 @@ export function getParentModule(childId: string): Module | undefined {
     return MODULES.find((m) => m.id === child.parent);
   }
   return undefined;
+}
+
+// Top-level modülleri getir (Dashboard'da gösterilecekler)
+export function getTopLevelModules(): Module[] {
+  return MODULES.filter((m) => m.parent === null);
 }
