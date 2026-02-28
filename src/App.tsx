@@ -1,28 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import {
   BrowserRouter,
   Routes,
   Route,
   Navigate,
   useLocation,
-} from 'react-router-dom';
-import { Toaster } from 'sonner';
-import { useAuthStore } from '@/store/authStore';
-import { Login } from '@/pages/Login';
-import { Dashboard } from '@/pages/Dashboard';
-import { Admin } from '@/pages/Admin';
-import { ModulePlaceholder } from '@/pages/ModulePlaceholder';
-import { SubModulePlaceholder } from '@/pages/SubModulePlaceholder';
-import { NotAuthorized403 } from '@/pages/NotAuthorized403';
-import { NotFound404 } from '@/pages/NotFound404';
-import { ProtectedRoute, ModuleProtectedRoute } from '@/components/common/ProtectedRoute';
+} from "react-router-dom";
+import { Toaster } from "sonner";
+import { useAuthStore } from "@/store/authStore";
+import { Login } from "@/pages/Login";
+import { Dashboard } from "@/pages/Dashboard";
+import { Admin } from "@/pages/Admin";
+import { ModulePlaceholder } from "@/pages/ModulePlaceholder";
+import { SubModulePlaceholder } from "@/pages/SubModulePlaceholder";
+import { NotAuthorized403 } from "@/pages/NotAuthorized403";
+import { NotFound404 } from "@/pages/NotFound404";
+import {
+  ProtectedRoute,
+  ModuleProtectedRoute,
+} from "@/components/common/ProtectedRoute";
 
 // Modül sayfaları
-import IplikDepo from '@/pages/IplikDepo';
-import HammaddeDepo from '@/pages/HammaddeDepo';
-import SiparisSatisSevkiyat from '@/pages/SiparisSatisSevkiyat';
-import Sertifikalar from '@/pages/Sertifikalar';
-import DIRPage from '@/pages/Sertifikalar/DIR';
+import IplikDepo from "@/pages/IplikDepo";
+import HammaddeDepo from "@/pages/HammaddeDepo";
+import SiparisSatisSevkiyat from "@/pages/SiparisSatisSevkiyat";
+import Sertifikalar from "@/pages/Sertifikalar";
+import DIRPage from "@/pages/Sertifikalar/DIR";
 
 // Auth check wrapper
 function AuthWrapper({ children }: { children: React.ReactNode }) {
@@ -39,11 +42,11 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 // Public route - redirect to dashboard if authenticated
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
-  
+
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
-  
+
   return <>{children}</>;
 }
 
@@ -234,10 +237,10 @@ function AppRoutes() {
       <Route path="/404" element={<NotFound404 />} />
 
       {/* Redirect root to login or dashboard */}
-      <Route
-        path="/"
-        element={<Navigate to="/login" replace />}
-      />
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
+      {/* Extra safety: if URL comes without trailing slash and is treated as a route */}
+      <Route path="/OYS-ERP" element={<Navigate to="/login" replace />} />
 
       {/* Catch all - 404 */}
       <Route path="*" element={<NotFound404 />} />
